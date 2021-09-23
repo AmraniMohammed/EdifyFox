@@ -42,6 +42,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'stretch',
+        backgroundColor: "#fff"
     },
     containerCenter: {
         marginHorizontal: 30
@@ -56,17 +57,20 @@ const styles = StyleSheet.create({
         padding: 10,
         marginBottom: 20,
         height: 40, 
-    	borderColor: 'gray', 
+    	borderColor: '#1A2138', 
+        borderRadius: 5,
     	borderWidth: 1,
     },
     submitButton: {
-        backgroundColor: '#7a42f4',
+        backgroundColor: '#274BDB',
         padding: 10,
         margin: 15,
         height: 40,
+        borderRadius: 50
      },
      submitButtonText:{
-        color: 'white',
+        color: '#F2F6FF',
+        fontWeight: "bold" ,
         textAlign: 'center'
      },
   });
