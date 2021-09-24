@@ -1,38 +1,84 @@
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
-
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, StatusBar, Platform } from 'react-native';
+import {LinearGradient} from 'expo-linear-gradient';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { faUser, faCheckCircle, faEye, faEyeSlash, faLock } from '@fortawesome/free-solid-svg-icons'
+import * as Animatable from 'react-native-animatable';
 
 const Login = (props) => {
     const navigation = props.navigation;
-    const [emailText, setEmailText] = useState('');
-    const [passwordText, setPasswordText] = useState('');
-    const [loginSession, setLoginSession] = useState(undefined);
-    
-    const loginHandler = () => {
-        let email = "edify@gmail.com";
-        let password = "edify@"
-        if(emailText === email && passwordText === password) {
-            setLoginSession(true);
-            navigation.navigate('AppHome');
+
+    const [userData, setUserData] = useState({
+        email: '',
+        password: '',
+        checkTextInputChange: false,
+        secureTextEntry: true
+      })
+
+    const emailChangeHandler = (email) => {
+        if(email.length != 0) {
+            setUserData({
+                ...userData,
+                email: email,
+                checkTextInputChange: true
+            })
         } else {
-            setLoginSession(false);
+            setUserData({
+                ...userData,
+                email: "",
+                checkTextInputChange: false
+            })
         }
+    }
+    const passwordChangeHandler = (password) => {
+        setUserData({
+            ...userData,
+            password: password
+        })
+    }
+    const updateSecureTextEntry = () => {
+        setUserData({
+            ...userData,
+            secureTextEntry: !userData.secureTextEntry
+        })
     }
 
     return (
         <View style={styles.container}>
-            <View style={styles.containerCenter}>
-                <Text style={styles.loginTitle}>Login</Text>
-                <TextInput style={styles.input} value={emailText} placeholder="Email" keyboardType="email-address" onChangeText={ text => setEmailText(text)} />
-                <TextInput style={styles.input} value={passwordText} placeholder="Password" secureTextEntry={true} onChangeText={ text => setPasswordText(text)} />
-                <View>{(loginSession === false) && <Text style={styles.error} >Shah les informations</Text>}</View>
-                <TouchableOpacity style = {styles.submitButton} onPress = {() => loginHandler() }>
-                    <Text style = {styles.submitButtonText}> Submit </Text>
-                </TouchableOpacity>
-                <TouchableOpacity style = {styles.singUpButton} onPress = {() => navigation.navigate('SignUp') }>
-                    <Text style = {styles.singUp}> T9ad compte? </Text>
-                </TouchableOpacity>
+            <StatusBar backgroundColor='#34495e' barStyle="light-content"/>
+            <View style={styles.header}>
+                <Text style={styles.textHeader}>Mrhba</Text>
             </View>
+            <Animatable.View animation="fadeInUpBig" duration={1000} style={styles.footer}>
+                <Text style={styles.textFooter}>Email</Text>
+                <View style={styles.action}>
+                    <FontAwesomeIcon icon={ faUser } color="#000" size={20}/>
+                    <TextInput placeholder="Your Email" placeholderTextColor="#ced6e0" style={styles.textInput} autoCapitalize="none" onChangeText={(email) => emailChangeHandler(email)} value={userData.email} />
+                    {userData.checkTextInputChange && <Animatable.View animation="bounceIn">
+                        <FontAwesomeIcon icon={ faCheckCircle } color="#ced6e0" size={20}/>
+                    </Animatable.View>}
+                </View>
+                <Text style={[styles.textFooter, {marginTop: 35}]}>Password</Text>
+                <View style={styles.action}>
+                    <FontAwesomeIcon icon={ faLock } color="#000" size={20}/>
+                    <TextInput placeholder="Your Password"  placeholderTextColor="#ced6e0" style={styles.textInput} autoCapitalize="none" secureTextEntry={userData.secureTextEntry} onChangeText={(password) => passwordChangeHandler(password)} value={userData.password} />
+                    <TouchableOpacity onPress={() => updateSecureTextEntry()}>
+                        <FontAwesomeIcon icon={userData.secureTextEntry? faEyeSlash : faEye } color="#ced6e0" size={20}/>
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.button}>
+                    <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 0}} colors={['#34495e', '#203544']} style={styles.signIn}>
+                        <Text style={styles.textSignIn}>Login</Text>
+                    </LinearGradient>
+                    <TouchableOpacity onPress={() => navigation.navigate('SignUp')} style={[styles.signIn, {
+                        borderColor: "#34495e",
+                        borderWidth: 1,
+                        marginTop: 15
+                    }]}>
+                        <Text style={styles.textSignUp}>T9ad compte?</Text>
+                    </TouchableOpacity>
+                </View>
+            </Animatable.View>
         </View>
     )
 }
@@ -40,51 +86,67 @@ const Login = (props) => {
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1, 
+        backgroundColor: '#34495e'
+    },
+    header: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'stretch',
-        backgroundColor: "#fff"
+        justifyContent: 'flex-end',
+        paddingHorizontal: 20,
+        paddingBottom: 50
     },
-    containerCenter: {
-        marginHorizontal: 30
+    footer: {
+        flex: 3,
+        backgroundColor: '#fff',
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
+        paddingHorizontal: 20,
+        paddingVertical: 30
     },
-    loginTitle: {
-        fontSize: 35,
+    textHeader: {
+        color: '#fff',
         fontWeight: 'bold',
-        marginBottom: 30,
-        textAlign: 'center'
+        fontSize: 30
     },
-    input: {
-        padding: 10,
-        marginBottom: 20,
-        height: 40, 
-    	borderColor: '#1A2138', 
-        borderRadius: 5,
-    	borderWidth: 1,
+    textFooter: {
+        color: '#05375a',
+        fontSize: 18
     },
-    submitButton: {
-        backgroundColor: '#274BDB',
-        padding: 10,
-        margin: 15,
-        height: 40,
+    action: {
+        flexDirection: 'row',
+        marginTop: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#f2f2f2',
+        paddingBottom: 5
+    },
+    textInput: {
+        flex: 1,
+        marginTop: Platform.OS === 'ios' ? 0 : -12,
+        paddingLeft: 10,
+        color: '#05375a',
+    },
+    button: {
+        alignItems: 'center',
+        marginTop: 50
+    },
+    signIn: {
+        width: '100%',
+        height: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
         borderRadius: 50
-     },
-     submitButtonText:{
-        color: '#F2F6FF',
-        fontWeight: "bold" ,
-        textAlign: 'center'
-     },
-     error: {
-         color: 'red',
-         marginVertical: 10
-     },
-     singUpButton: {
-        padding: 8,
-     },
-     singUp: {
-        color: "#3498db",
-        textAlign: 'center'
-     }
+    },
+    textSignIn: {
+        fontSize: 18,
+        fontWeight: '600',
+        color: "#fff"
+    },
+    textSignUp: {
+        fontSize: 18,
+        fontWeight: '600' ,
+        color: '#34495e'
+
+    }
   });
 
 export default Login
