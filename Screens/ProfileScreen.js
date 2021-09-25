@@ -1,8 +1,12 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native'
+import {AuthContext} from '../Components/context'
+
 
 const ProfileScreen = (props) => {
     const navigation = props.navigation
+    const { signOut } = useContext(AuthContext)
+
     return (
         <View style={styles.container}>
             <Image source={{uri: "https://i.postimg.cc/CMmM7b0t/profile.png"}} style={styles.userImage} />
@@ -25,8 +29,8 @@ const ProfileScreen = (props) => {
                 </View>
             </View>
             <View style={styles.sectionContainer}>
-                <TouchableOpacity style = {styles.editButton} onPress = {() => {} }>
-                    <Text style = {styles.editButtonText}> Edit Profile </Text>
+                <TouchableOpacity style = {styles.editButton} onPress={() => signOut()}>
+                    <Text style = {styles.editButtonText}> Sing Out </Text>
                 </TouchableOpacity>
                 <TouchableOpacity style = {styles.editButton} onPress = {() => {} }>
                     <Text style = {styles.editButtonText}> Change your password </Text>

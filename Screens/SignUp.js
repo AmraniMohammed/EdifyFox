@@ -89,9 +89,11 @@ const SignUp = (props) => {
                     </TouchableOpacity>
                 </View>
                 <View style={styles.button}>
-                    <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 0}} colors={['#34495e', '#203544']} style={styles.signIn}>
-                        <Text style={styles.textSignIn}>9ad l compte</Text>
-                    </LinearGradient>
+                <TouchableOpacity style={styles.signIn}  onPress={() => loginHandler()}>
+                        <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 0}} colors={['#34495e', '#203544']} style={styles.signIn}>
+                            <Text style={styles.textSignIn}>9adli l compte</Text>
+                        </LinearGradient>
+                    </TouchableOpacity>
                     <TouchableOpacity onPress={() => navigation.navigate('Login')} style={[styles.signIn, {
                         borderColor: "#34495e",
                         borderWidth: 1,

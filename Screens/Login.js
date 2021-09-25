@@ -1,46 +1,86 @@
-import React, { useState } from 'react'
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, StatusBar, Platform } from 'react-native';
+import React, { useState, useContext} from 'react'
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, StatusBar, Platform } from 'react-native'
 import {LinearGradient} from 'expo-linear-gradient';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faUser, faCheckCircle, faEye, faEyeSlash, faLock } from '@fortawesome/free-solid-svg-icons'
-import * as Animatable from 'react-native-animatable';
+import * as Animatable from 'react-native-animatable'
+import {AuthContext} from '../Components/context'
+
 
 const Login = (props) => {
-    const navigation = props.navigation;
+    const navigation = props.navigation
 
     const [userData, setUserData] = useState({
         email: '',
         password: '',
         checkTextInputChange: false,
-        secureTextEntry: true
-      })
+        secureTextEntry: true,
+        isValidEmail: true,
+        isValidPassword: true,
+    })
+
+    const { signIn } = useContext(AuthContext)
 
     const emailChangeHandler = (email) => {
-        if(email.length != 0) {
+        const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        if (reg.test(email) === true) {
             setUserData({
                 ...userData,
                 email: email,
-                checkTextInputChange: true
+                checkTextInputChange: true,
+                isValidEmail: true
             })
         } else {
             setUserData({
                 ...userData,
-                email: "",
+                email: email,
                 checkTextInputChange: false
             })
         }
     }
+
     const passwordChangeHandler = (password) => {
-        setUserData({
+        
+        if( password.trim().length >= 8 ) {
+            setUserData({
             ...userData,
-            password: password
+            password: password,
+            isValidPassword: true
         })
+        } else {
+            setUserData({
+                ...userData,
+                password: password,
+                isValidPassword: false
+            })
+        }
     }
+
     const updateSecureTextEntry = () => {
         setUserData({
             ...userData,
             secureTextEntry: !userData.secureTextEntry
         })
+    }
+
+    const loginHandler = () => {
+        signIn(userData.email, userData.password)
+    }
+
+    const emailValidationHandler = (email) => {
+        const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+           if (reg.test(email) === false){
+            setUserData({
+                ...userData,
+                isValidEmail: false
+            })
+           }
+           else{
+                setUserData({
+                    ...userData,
+                    isValidEmail: true
+                })
+           }
     }
 
     return (
@@ -53,11 +93,16 @@ const Login = (props) => {
                 <Text style={styles.textFooter}>Email</Text>
                 <View style={styles.action}>
                     <FontAwesomeIcon icon={ faUser } color="#000" size={20}/>
-                    <TextInput placeholder="Your Email" placeholderTextColor="#ced6e0" style={styles.textInput} autoCapitalize="none" onChangeText={(email) => emailChangeHandler(email)} value={userData.email} />
+                    <TextInput placeholder="Your Email" placeholderTextColor="#ced6e0" style={styles.textInput} autoCapitalize="none" onChangeText={(email) => emailChangeHandler(email)} value={userData.email} onEndEditing={e => emailValidationHandler(e.nativeEvent.text)} />
                     {userData.checkTextInputChange && <Animatable.View animation="bounceIn">
                         <FontAwesomeIcon icon={ faCheckCircle } color="#ced6e0" size={20}/>
                     </Animatable.View>}
                 </View>
+                { !userData.isValidEmail && 
+                <Animatable.View animation="fadeInLeft" duration={500}>
+                    <Text style={styles.errorMsg}>Wrong Email</Text>
+                </Animatable.View>
+                }
                 <Text style={[styles.textFooter, {marginTop: 35}]}>Password</Text>
                 <View style={styles.action}>
                     <FontAwesomeIcon icon={ faLock } color="#000" size={20}/>
@@ -66,10 +111,20 @@ const Login = (props) => {
                         <FontAwesomeIcon icon={userData.secureTextEntry? faEyeSlash : faEye } color="#ced6e0" size={20}/>
                     </TouchableOpacity>
                 </View>
+                { !userData.isValidPassword && 
+                <Animatable.View animation="fadeInLeft" duration={500}>
+                    <Text style={styles.errorMsg}>Password must be at least 8 characters</Text>
+                </Animatable.View>
+                }
+                <TouchableOpacity>
+                    <Text style={{color: '#34495e', marginTop:15}}>Forgot password?</Text>
+                </TouchableOpacity>
                 <View style={styles.button}>
-                    <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 0}} colors={['#34495e', '#203544']} style={styles.signIn}>
-                        <Text style={styles.textSignIn}>Login</Text>
-                    </LinearGradient>
+                    <TouchableOpacity style={styles.signIn}  onPress={() => loginHandler()}>
+                        <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 0}} colors={['#34495e', '#203544']} style={styles.signIn}>
+                            <Text style={styles.textSignIn}>Login</Text>
+                        </LinearGradient>
+                    </TouchableOpacity>
                     <TouchableOpacity onPress={() => navigation.navigate('SignUp')} style={[styles.signIn, {
                         borderColor: "#34495e",
                         borderWidth: 1,
@@ -146,7 +201,11 @@ const styles = StyleSheet.create({
         fontWeight: '600' ,
         color: '#34495e'
 
-    }
+    },
+    errorMsg: {
+        color: '#e74c3c',
+        fontSize: 14,
+    },
   });
 
 export default Login
