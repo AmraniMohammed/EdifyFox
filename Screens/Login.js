@@ -1,10 +1,11 @@
 import React, { useState, useContext} from 'react'
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, StatusBar, Platform } from 'react-native'
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, StatusBar, Platform, Alert } from 'react-native'
 import {LinearGradient} from 'expo-linear-gradient';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faUser, faCheckCircle, faEye, faEyeSlash, faLock } from '@fortawesome/free-solid-svg-icons'
 import * as Animatable from 'react-native-animatable'
 import {AuthContext} from '../Components/context'
+import {getUsers} from '../API/Users'
 
 
 const Login = (props) => {
@@ -41,7 +42,7 @@ const Login = (props) => {
 
     const passwordChangeHandler = (password) => {
         
-        if( password.trim().length >= 8 ) {
+        if( password.trim().length >= 4 ) {
             setUserData({
             ...userData,
             password: password,
@@ -63,8 +64,16 @@ const Login = (props) => {
         })
     }
 
-    const loginHandler = () => {
-        signIn(userData.email, userData.password)
+    async function loginHandler() {
+        const users = await getUsers()
+        //console.log("hana: \n", users, "\n---------------------")
+        const foundUser = await users.filter(user => (userData.email === user.email && userData.password === user.password))
+        //console.log("hachno l9it: \n", foundUser)
+        if(foundUser.length === 0) {
+            Alert.alert("Invalid User", "Email or Password is incorrect", [{text: 'Ok'}])
+            return;
+        }
+        signIn(foundUser)
     }
 
     const emailValidationHandler = (email) => {
@@ -113,7 +122,7 @@ const Login = (props) => {
                 </View>
                 { !userData.isValidPassword && 
                 <Animatable.View animation="fadeInLeft" duration={500}>
-                    <Text style={styles.errorMsg}>Password must be at least 8 characters</Text>
+                    <Text style={styles.errorMsg}>Password must be at least 4 characters</Text>
                 </Animatable.View>
                 }
                 <TouchableOpacity>

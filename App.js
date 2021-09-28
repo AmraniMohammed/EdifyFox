@@ -4,9 +4,7 @@ import { StyleSheet, ActivityIndicator, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-
-
+import {getToken} from './API/Users';
 import AppHome from './Screens/AppHome';
 import {AuthContext} from './Components/context';
 import RootStackScreen from './Screens/RootStackScreen'
@@ -58,17 +56,19 @@ export default function App() {
   const [loginState, dispatch] = useReducer(loginReducer, initialLoginState);
 
   const authContext = useMemo(() => ({
-      signIn: async (email, password) => {
-        let userToken = null;
-        if(email === "email" && password === "doz") {
-          try {
-            userToken = "ghbnjd"
+      signIn: async (user) => {
+        //console.log("=================================\n",user[0], "\n*************\n", "useName:", user[0].username, "\n*************\n",  getToken(user[0].username, user[0].password), "\n===============================\n")
+        let userToken = String(user[0].id + user[0].username)
+        const userNmae =  user[0].username
+        //console.log(userToken)
+        try {
+            userToken = userToken
             await AsyncStorage.setItem('userToken',userToken)
-          } catch(err) {
+        } catch(err) {
             console.log(err)
-          }
         }
-        dispatch({ type: "LOGIN", id: email, token: userToken})
+
+        dispatch({ type: "LOGIN", id: userNmae, token: userToken})
       },
       signOut: async() => {
         try {
