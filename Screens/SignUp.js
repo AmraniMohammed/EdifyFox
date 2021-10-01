@@ -1,12 +1,15 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, StatusBar, Platform, ScrollView } from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import { faUser, faCheckCircle, faEye, faEyeSlash, faLock } from '@fortawesome/free-solid-svg-icons'
+import { faUser, faCheckCircle, faEye, faEyeSlash, faLock, faEnvelope, faCalendarAlt, faVenusMars } from '@fortawesome/free-solid-svg-icons'
 import * as Animatable from 'react-native-animatable';
+import {AuthContext} from '../Components/context'
 
 const SignUp = (props) => {
     const navigation = props.navigation;
+
+    const { signUp } = useContext(AuthContext)
 
     const [userData, setUserData] = useState({
         email: '',
@@ -57,6 +60,10 @@ const SignUp = (props) => {
         })
     }
 
+    const signUpHandler = () => {
+        signUp()
+    }
+
     return (
         <View style={styles.container}>
             <StatusBar backgroundColor='#34495e' barStyle="light-content"/>
@@ -68,22 +75,16 @@ const SignUp = (props) => {
                     <Text style={styles.textFooter}>First Name</Text>
                     <View style={styles.action}>
                         <FontAwesomeIcon icon={ faUser } color="#000" size={20}/>
-                        <TextInput placeholder="First Name" placeholderTextColor="#ced6e0" style={styles.textInput} autoCapitalize="none" onChangeText={(email) => emailChangeHandler(email)} value={userData.email} />
-                        {userData.checkTextInputChange && <Animatable.View animation="bounceIn">
-                            <FontAwesomeIcon icon={ faCheckCircle } color="#ced6e0" size={20}/>
-                        </Animatable.View>}
+                        <TextInput placeholder="First Name" placeholderTextColor="#ced6e0" style={styles.textInput} autoCapitalize="none" />
                     </View>
-                    <Text style={styles.textFooter}>Last Name</Text>
+                    <Text style={[styles.textFooter, {marginTop: 35}]}>Last Name</Text>
                     <View style={styles.action}>
                         <FontAwesomeIcon icon={ faUser } color="#000" size={20}/>
-                        <TextInput placeholder="Last Name" placeholderTextColor="#ced6e0" style={styles.textInput} autoCapitalize="none" onChangeText={(email) => emailChangeHandler(email)} value={userData.email} />
-                        {userData.checkTextInputChange && <Animatable.View animation="bounceIn">
-                            <FontAwesomeIcon icon={ faCheckCircle } color="#ced6e0" size={20}/>
-                        </Animatable.View>}
+                        <TextInput placeholder="Last Name" placeholderTextColor="#ced6e0" style={styles.textInput} autoCapitalize="none"  />
                     </View>
-                    <Text style={styles.textFooter}>Email</Text>
+                    <Text style={[styles.textFooter, {marginTop: 35}]}>Email</Text>
                     <View style={styles.action}>
-                        <FontAwesomeIcon icon={ faUser } color="#000" size={20}/>
+                        <FontAwesomeIcon icon={ faEnvelope } color="#000" size={20}/>
                         <TextInput placeholder="Your Email" placeholderTextColor="#ced6e0" style={styles.textInput} autoCapitalize="none" onChangeText={(email) => emailChangeHandler(email)} value={userData.email} />
                         {userData.checkTextInputChange && <Animatable.View animation="bounceIn">
                             <FontAwesomeIcon icon={ faCheckCircle } color="#ced6e0" size={20}/>
@@ -105,8 +106,18 @@ const SignUp = (props) => {
                             <FontAwesomeIcon icon={userData.confirmSecureTextEntry? faEyeSlash : faEye } color="#ced6e0" size={20}/>
                         </TouchableOpacity>
                     </View>
+                    <Text style={[styles.textFooter, {marginTop: 35}]}>Birthday</Text>
+                    <View style={styles.action}>
+                        <FontAwesomeIcon icon={ faCalendarAlt } color="#000" size={20}/>
+                        <TextInput placeholder="Birthday"  placeholderTextColor="#ced6e0" style={styles.textInput} autoCapitalize="none" />
+                    </View>
+                    <Text style={[styles.textFooter, {marginTop: 35}]}>Gender</Text>
+                    <View style={styles.action}>
+                        <FontAwesomeIcon icon={ faVenusMars } color="#000" size={20}/>
+                        <TextInput placeholder="Gender"  placeholderTextColor="#ced6e0" style={styles.textInput} autoCapitalize="none" />
+                    </View>
                     <View style={styles.button}>
-                    <TouchableOpacity style={styles.signIn}  onPress={() => loginHandler()}>
+                    <TouchableOpacity style={styles.signIn}  onPress={() => signUpHandler()}>
                             <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 0}} colors={['#34495e', '#203544']} style={styles.signIn}>
                                 <Text style={styles.textSignIn}>9adli l compte</Text>
                             </LinearGradient>

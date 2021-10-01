@@ -58,8 +58,8 @@ export default function App() {
   const authContext = useMemo(() => ({
       signIn: async (user) => {
         //console.log("=================================\n",user[0], "\n*************\n", "useName:", user[0].username, "\n*************\n",  getToken(user[0].username, user[0].password), "\n===============================\n")
-        let userToken = String(user[0].id + user[0].username)
-        const userNmae =  user[0].username
+        let userToken = String(user[0].id + user[0].email)
+        const userNmae =  user[0].email
         //console.log(userToken)
         try {
             userToken = userToken
@@ -80,8 +80,8 @@ export default function App() {
         dispatch({ type: "LOGOUT" })
       },
       signUp: () => {
-        setIsLoading(false);
-        setUserToken("hndkn");
+        dispatch({ type: "LOGIN", id: "userNmae", token: "userToken"})
+
       },
   }))
   
